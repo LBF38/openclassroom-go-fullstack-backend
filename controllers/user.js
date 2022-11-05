@@ -47,14 +47,4 @@ exports.login = (req, res, next) => {
     .catch((error) => {
       res.status(500).json({ error });
     });
-
-  bcrypt
-    .hash(req.body.password, 10)
-    .then((hash) => {
-      bcrypt
-        .compare(hash)
-        .then(res.status(200).json({ message: "Authenticated!" }))
-        .catch((error) => res.status(400).json({ error }));
-    })
-    .catch((error) => res.status(500).json({ error }));
 };
