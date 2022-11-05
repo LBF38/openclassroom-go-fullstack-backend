@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
 
@@ -28,15 +29,18 @@ exports.login = (req, res, next) => {
       } else {
         bcrypt.compare(req.body.password, user.password).then((valid) => {
           if (!valid) {
-            res
+            return res
               .status(401)
               .json({ message: "Paire identifiant/mot de passe incorrecte" });
-          } else {
-            res.status(200).json({
-              userId: user._id,
-              token: "TOKEN",
-            });
           }
+          res.status(200).json({
+            userId: user._id,
+            token: jwt.sign(
+              { userId: user._id },
+              "RANDOM_SECRET_KEY", // A remplacer en production par une chaîne aléatoire plus longue.
+              { expiresIn: "24h" }
+            ),
+          });
         });
       }
     })
